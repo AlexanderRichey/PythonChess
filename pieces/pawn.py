@@ -1,8 +1,8 @@
 from piece import Piece
 
 class Pawn(Piece):
-    def __init__(self):
-        Piece.__init__(self)
+    def __init__(self, board, pos, color):
+        Piece.__init__(self, board, pos, color)
 
     def move_directions(self):
         pass

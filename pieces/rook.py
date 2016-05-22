@@ -1,8 +1,8 @@
 from sliding import SlidingPiece
 
 class Rook(SlidingPiece):
-    def __init__(self):
-        SlidingPiece.__init__(self)
+    def __init__(self, board, pos, color):
+        SlidingPiece.__init__(self, board, pos, color)
 
     def move_directions(self):
         return [[-1, 0],

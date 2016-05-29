@@ -17,4 +17,4 @@ class Game:
         while True:
             self.display.render()
             self.current_player.take_turn()
-            self.switch_players
+            self.switch_players()

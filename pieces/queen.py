@@ -1,3 +1,6 @@
+# This Python file uses the following encoding: utf-8
+import os, sys
+
 from sliding import SlidingPiece
 
 class Queen(SlidingPiece):
@@ -15,4 +18,7 @@ class Queen(SlidingPiece):
                 [1, 1]]
 
     def symbol(self):
-        return " Q "
+        if self.color == "White":
+            return u" ♕ "
+        else:
+            return u" ♛ "

@@ -1,3 +1,6 @@
+# This Python file uses the following encoding: utf-8
+import os, sys
+
 from sliding import SlidingPiece
 
 class Bishop(SlidingPiece):
@@ -11,4 +14,7 @@ class Bishop(SlidingPiece):
                 [1, 1]]
 
     def symbol(self):
-        return " B "
+        if self.color == "White":
+            return u" ♗ "
+        else:
+            return u" ♝ "

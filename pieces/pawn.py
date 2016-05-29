@@ -1,3 +1,6 @@
+# This Python file uses the following encoding: utf-8
+import os, sys
+
 from piece import Piece
 
 class Pawn(Piece):
@@ -7,7 +10,10 @@ class Pawn(Piece):
         self.original_position = pos
 
     def symbol(self):
-        return " P "
+        if self.color == "White":
+            return u" ♙ "
+        else:
+            return u" ♟ "
 
     def move_directions(self):
         move_directions = [[self.direction,  0],
@@ -33,7 +39,6 @@ class Pawn(Piece):
     def is_valid_pawn_move(self, start_pos, end_pos):
         if self.is_valid_and_is_in_bounds(start_pos, end_pos):
             if self.is_pawn_capture(start_pos, end_pos):
-                print "Pawn Capture " + str(end_pos)
                 return self.board.is_capture(self.to_tile(start_pos),
                                              self.to_tile(end_pos))
             elif self.is_en_passant(start_pos, end_pos):
@@ -42,7 +47,6 @@ class Pawn(Piece):
                 return not self.board.is_capture(self.to_tile(start_pos),
                                                  self.to_tile(end_pos))
         else:
-            print "Is not valid or is not in bounds"
             return False
 
     def is_pawn_capture(self, start_pos, end_pos):

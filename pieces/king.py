@@ -1,3 +1,6 @@
+# This Python file uses the following encoding: utf-8
+import os, sys
+
 from stepping import SteppingPiece
 
 class King(SteppingPiece):
@@ -15,4 +18,7 @@ class King(SteppingPiece):
                 [1, 1]]
 
     def symbol(self):
-        return " K "
+        if self.color == "White":
+            return u" ♔ "
+        else:
+            return u" ♚ "

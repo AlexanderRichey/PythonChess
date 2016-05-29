@@ -11,9 +11,6 @@ class Board:
 
     def make_move(self, start_pos, end_pos):
         start_tile_content = self.grid[start_pos[0]][start_pos[1]]
-
-        print start_tile_content.possible_moves()
-
         self.validate(start_tile_content, end_pos)
         self.move(start_pos, start_tile_content, end_pos)
 

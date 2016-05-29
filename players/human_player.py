@@ -5,8 +5,9 @@ class HumanPlayer:
 
     def take_turn(self):
         while True:
+            print "\n..." + self.color + " Player's Turn..."
             start_pos = self.get_input("Start Position >> ")
-            end_pos = self.get_input("End Position >> ")
+            end_pos = self.get_input("End Position   >> ")
             try:
                 self.validate_color(start_pos, end_pos)
                 self.board.make_move(start_pos, end_pos)

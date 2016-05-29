@@ -16,7 +16,7 @@ class SlidingPiece(Piece):
                            end_pos[1] + direction[1]]
     	        if self.is_valid_and_is_in_bounds(start_pos, end_pos):
                     possible_moves.append(end_pos)
-    	            if self.board.is_piece(end_pos): break
+    	            if self.board.is_piece(self.to_tile(end_pos)): break
                 else:
                     break
 

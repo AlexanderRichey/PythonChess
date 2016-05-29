@@ -9,6 +9,7 @@ class Display:
             return arg[1].symbol()
 
     def render(self):
+        print ""
         for idx, row in enumerate(self.board.grid):
             print str(8 - idx) + str().join(map(self.decoder, row))
 

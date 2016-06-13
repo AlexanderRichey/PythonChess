@@ -1,3 +1,4 @@
+from pieces.piece import Piece
 from pieces.king import King
 from pieces.queen import Queen
 from pieces.rook import Rook
@@ -36,7 +37,7 @@ class Board:
 
     def is_check_for(self, color):
         for move_pos in self.possible_moves_for(self._opponent):
-            if move_pos == self.king_for(color).pos: return True
+            if move_pos == self._king_for(color).pos: return True
         return False
 
     def is_check(self):
@@ -46,7 +47,10 @@ class Board:
         return self.is_checkmate_for("White") or self.is_checkmate_for("Black")
 
     def is_checkmate_for(self, color):
-        return True if not self.possible_moves_for(color) else return False
+        if self.possible_moves_for(color) == []:
+            return True
+        else:
+            return False
 
     def is_legal(self, start_tile_content, end_pos):
         return end_pos in start_tile_content.possible_moves()
@@ -60,7 +64,7 @@ class Board:
             return True
 
     def is_piece(self, tile_content):
-        return not self.is_empty(tile_content)
+        return isinstance(tile_content, Piece)
 
     def is_empty(self, tile_content):
         return tile_content == None
@@ -89,7 +93,7 @@ class Board:
     def _opponent(self, color):
         if color == "White":
             return "Black"
-        else
+        else:
             return "White"
 
     def _validate(self, start_tile_content, end_pos):
@@ -102,8 +106,9 @@ class Board:
         self.grid[start_pos[0]][start_pos[1]] = None
 
     def _get_all_pieces(self):
-        for tile in self.grid:
-            if self.is_piece(tile): self._collect_piece(tile)
+        for row in self.grid:
+            for tile in row:
+                if self.is_piece(tile): self._collect_piece(tile)
 
     def _collect_piece(self, piece):
         self.pieces.append(piece)
@@ -117,7 +122,7 @@ class Board:
 
     def _king_for(self, color):
         for piece in self.pieces_for(color):
-            if type(piece) is King: return piece
+            if isinstance(piece, King): return piece
 
     def _populate_pawns(self, row, color, direction):
         for i in range(8):

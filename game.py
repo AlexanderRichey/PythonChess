@@ -14,7 +14,12 @@ class Game:
 
     def play(self):
         self.board.populate()
-        while True:
+        while not self.board.is_checkmate():
             self.display.render()
+            self._render_check()
             self.current_player.take_turn()
             self.switch_players()
+
+    def _render_check(self):
+        if self.board.is_check_for(self.current_player.color):
+            print self.current_player.color + " is in check"

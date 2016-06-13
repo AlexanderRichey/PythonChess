@@ -47,7 +47,7 @@ class Board:
         return self.is_checkmate_for("White") or self.is_checkmate_for("Black")
 
     def is_checkmate_for(self, color):
-        if self.possible_moves_for(color) == []:
+        if not self.possible_moves_for(color):
             return True
         else:
             return False

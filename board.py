@@ -21,20 +21,6 @@ class Board:
         self._ensure_pieces()
         return self.pieces
 
-    def _get_all_pieces(self):
-        for tile in self.grid:
-            if self.is_piece(tile): self._collect_piece(tile)
-
-    def _collect_piece(self, piece):
-        self.pieces.append(piece)
-        if piece.color == "White":
-            self.white_pieces.append(piece)
-        else:
-            self.black_pieces.append(piece)
-
-    def _ensure_pieces(self):
-        if not self.pieces: self._get_all_pieces()
-
     def pieces_for(self, color):
         self._ensure_pieces()
         if color == "White":
@@ -46,26 +32,21 @@ class Board:
         possible_moves = []
         for piece in self.pieces_for(color):
             possible_moves.extend(piece.possible_moves())
-
         return possible_moves
 
-    def is_check(self, color):
-        pass
-
     def is_check_for(self, color):
-        pass
+        for move_pos in self.possible_moves_for(self._opponent):
+            if move_pos == self.king_for(color).pos: return True
+        return False
+
+    def is_check(self):
+        return self.is_check_for("White") or self.is_check_for("Black")
 
     def is_checkmate(self):
-        pass
+        return self.is_checkmate_for("White") or self.is_checkmate_for("Black")
 
-    def _validate(self, start_tile_content, end_pos):
-        if not self.is_legal(start_tile_content, end_pos):
-            raise Exception
-
-    def _move(self, start_pos, start_tile_content, end_pos):
-        self.grid[end_pos[0]][end_pos[1]] = start_tile_content
-        start_tile_content.pos = end_pos
-        self.grid[start_pos[0]][start_pos[1]] = None
+    def is_checkmate_for(self, color):
+        return True if not self.possible_moves_for(color) else return False
 
     def is_legal(self, start_tile_content, end_pos):
         return end_pos in start_tile_content.possible_moves()
@@ -104,6 +85,39 @@ class Board:
         self._populate_pawns(1, "Black",  1)
         self._populate_pawns(6, "White", -1)
         self._populate_major_and_minor(7, "White")
+
+    def _opponent(self, color):
+        if color == "White":
+            return "Black"
+        else
+            return "White"
+
+    def _validate(self, start_tile_content, end_pos):
+        if not self.is_legal(start_tile_content, end_pos):
+            raise Exception
+
+    def _move(self, start_pos, start_tile_content, end_pos):
+        self.grid[end_pos[0]][end_pos[1]] = start_tile_content
+        start_tile_content.pos = end_pos
+        self.grid[start_pos[0]][start_pos[1]] = None
+
+    def _get_all_pieces(self):
+        for tile in self.grid:
+            if self.is_piece(tile): self._collect_piece(tile)
+
+    def _collect_piece(self, piece):
+        self.pieces.append(piece)
+        if piece.color == "White":
+            self.white_pieces.append(piece)
+        else:
+            self.black_pieces.append(piece)
+
+    def _ensure_pieces(self):
+        if not self.pieces: self._get_all_pieces()
+
+    def _king_for(self, color):
+        for piece in self.pieces_for(color):
+            if type(piece) is King: return piece
 
     def _populate_pawns(self, row, color, direction):
         for i in range(8):

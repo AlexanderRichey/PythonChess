@@ -36,7 +36,7 @@ class Board:
         return possible_moves
 
     def is_check_for(self, color):
-        for move_pos in self.possible_moves_for(self._opponent):
+        for move_pos in self.possible_moves_for(self._opponent(color)):
             if move_pos == self._king_for(color).pos: return True
         return False
 
@@ -47,10 +47,7 @@ class Board:
         return self.is_checkmate_for("White") or self.is_checkmate_for("Black")
 
     def is_checkmate_for(self, color):
-        if not self.possible_moves_for(color):
-            return True
-        else:
-            return False
+        return not self.possible_moves_for(color)
 
     def is_legal(self, start_tile_content, end_pos):
         return end_pos in start_tile_content.possible_moves()

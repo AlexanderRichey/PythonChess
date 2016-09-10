@@ -9,9 +9,9 @@ from pieces.pawn import Pawn
 class Board:
     def __init__(self):
         self.grid = [([None] * 8) for i in range(8)]
-        self.pieces = []
-        self.white_pieces = []
-        self.black_pieces = []
+        self.pieces = set()
+        self.white_pieces = set()
+        self.black_pieces = set()
 
     def make_move(self, start_pos, end_pos):
         start_tile_content = self.grid[start_pos[0]][start_pos[1]]
@@ -36,9 +36,8 @@ class Board:
         return possible_moves
 
     def is_check_for(self, color):
-        for move_pos in self.possible_moves_for(self._opponent(color)):
-            if move_pos == self._king_for(color).pos: return True
-        return False
+        return self._king_for(color).pos in self.possible_moves_for(
+                                                self._opponent(color))
 
     def is_check(self):
         return self.is_check_for("White") or self.is_check_for("Black")
@@ -47,7 +46,17 @@ class Board:
         return self.is_checkmate_for("White") or self.is_checkmate_for("Black")
 
     def is_checkmate_for(self, color):
-        return not self.possible_moves_for(color)
+        checkmate = True
+        for piece in self.pieces_for(color):
+            for end_pos in piece.possible_moves():
+                end_tile_content = self.grid[end_pos[0]][end_pos[1]]
+                if self.is_valid(piece, end_tile_content):
+                    start_pos = piece.pos
+                    self._move(start_pos, piece, end_pos)
+                    if not self.is_check_for(color): checkmate = False
+                    self._undo_move(start_pos, piece, end_pos, end_tile_content)
+                    if not checkmate: return False
+        return True
 
     def is_legal(self, start_tile_content, end_pos):
         return end_pos in start_tile_content.possible_moves()
@@ -75,7 +84,6 @@ class Board:
         for coord in pos:
             if coord not in range(8):
                 return False
-
         return True
 
     def is_capture_own_color(self, start_tile, end_tile):
@@ -98,9 +106,23 @@ class Board:
             raise Exception
 
     def _move(self, start_pos, start_tile_content, end_pos):
+        end_tile_content = self.grid[end_pos[0]][end_pos[1]]
+        try:
+            self.pieces.discard(end_tile_content)
+            self.pieces_for(end_tile_content.color).discard(end_tile_content)
+        except: pass
         self.grid[end_pos[0]][end_pos[1]] = start_tile_content
         start_tile_content.pos = end_pos
         self.grid[start_pos[0]][start_pos[1]] = None
+
+    def _undo_move(self, start_pos, start_tile_content, end_pos, end_tile_content):
+        try:
+            self.pieces.add(end_tile_content)
+            self.pieces_for(end_tile_content.color).add(end_tile_content)
+        except: pass
+        self.grid[start_pos[0]][start_pos[1]] = start_tile_content
+        start_tile_content.pos = start_pos
+        self.grid[end_pos[0]][end_pos[1]] = end_tile_content
 
     def _get_all_pieces(self):
         for row in self.grid:
@@ -108,11 +130,11 @@ class Board:
                 if self.is_piece(tile): self._collect_piece(tile)
 
     def _collect_piece(self, piece):
-        self.pieces.append(piece)
+        self.pieces.add(piece)
         if piece.color == "White":
-            self.white_pieces.append(piece)
+            self.white_pieces.add(piece)
         else:
-            self.black_pieces.append(piece)
+            self.black_pieces.add(piece)
 
     def _ensure_pieces(self):
         if not self.pieces: self._get_all_pieces()

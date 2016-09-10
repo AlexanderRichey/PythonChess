@@ -6,11 +6,9 @@ class SlidingPiece(Piece):
 
     def possible_moves(self):
         possible_moves = []
-
         for direction in self.move_directions():
             start_pos = self.pos
             end_pos = start_pos
-
             while True:
                 end_pos = [end_pos[0] + direction[0],
                            end_pos[1] + direction[1]]
@@ -19,5 +17,4 @@ class SlidingPiece(Piece):
     	            if self.board.is_piece(self.to_tile(end_pos)): break
                 else:
                     break
-
         return possible_moves

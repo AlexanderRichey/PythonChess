@@ -15,7 +15,7 @@ class Board:
 
     def make_move(self, start_pos, end_pos):
         start_tile_content = self.grid[start_pos[0]][start_pos[1]]
-        self._validate(start_tile_content, end_pos)
+        if not self.is_legal(start_tile_content, end_pos): raise Exception
         self._move(start_pos, start_tile_content, end_pos)
 
     def all_pieces(self):
@@ -30,14 +30,13 @@ class Board:
             return self.black_pieces
 
     def possible_moves_for(self, color):
-        possible_moves = []
-        for piece in self.pieces_for(color):
-            possible_moves.extend(piece.possible_moves())
-        return possible_moves
+        return set(coord for sublist in
+                tuple(piece.possible_moves() for piece in self.pieces_for(color))
+                for coord in sublist)
 
     def is_check_for(self, color):
-        return self._king_for(color).pos in self.possible_moves_for(
-                                                self._opponent(color))
+        return tuple(self._king_for(color).pos) in self.possible_moves_for(
+                                                    self._opponent(color))
 
     def is_check(self):
         return self.is_check_for("White") or self.is_check_for("Black")
@@ -100,10 +99,6 @@ class Board:
             return "Black"
         else:
             return "White"
-
-    def _validate(self, start_tile_content, end_pos):
-        if not self.is_legal(start_tile_content, end_pos):
-            raise Exception
 
     def _move(self, start_pos, start_tile_content, end_pos):
         end_tile_content = self.grid[end_pos[0]][end_pos[1]]

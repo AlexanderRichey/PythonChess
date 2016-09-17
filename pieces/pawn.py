@@ -23,14 +23,14 @@ class Pawn(Piece):
             move_directions.append([(self.direction * 2), 0])
         return move_directions
 
-    def possible_moves(self):        
-        possible_moves = []
+    def possible_moves(self):
+        possible_moves = set()
         for direction in self.move_directions():
             start_pos = self.pos
             end_pos = [start_pos[0] + direction[0],
                        start_pos[1] + direction[1]]
             if self.is_valid_pawn_move(start_pos, end_pos):
-                possible_moves.append(end_pos)
+                possible_moves.add(tuple(end_pos))
         return possible_moves
 
     def is_valid_pawn_move(self, start_pos, end_pos):

@@ -17,7 +17,7 @@ class HumanPlayer:
                 print e #for debugging
 
     def parse_input(self, pos):
-        return [(8 - int(pos[1])), self.parse_letter(pos[0].lower())]
+        return ((8 - int(pos[1])), self.parse_letter(pos[0].lower()))
 
     def parse_letter(self, letter):
         return ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'].index(letter)

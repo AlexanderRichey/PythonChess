@@ -5,7 +5,7 @@ class SlidingPiece(Piece):
         Piece.__init__(self, board, pos, color)
 
     def possible_moves(self):
-        possible_moves = []
+        possible_moves = set()
         for direction in self.move_directions():
             start_pos = self.pos
             end_pos = start_pos
@@ -13,7 +13,7 @@ class SlidingPiece(Piece):
                 end_pos = [end_pos[0] + direction[0],
                            end_pos[1] + direction[1]]
     	        if self.is_valid_and_is_in_bounds(start_pos, end_pos):
-                    possible_moves.append(end_pos)
+                    possible_moves.add(tuple(end_pos))
     	            if self.board.is_piece(self.to_tile(end_pos)): break
                 else:
                     break

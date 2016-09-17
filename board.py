@@ -81,8 +81,7 @@ class Board:
 
     def is_in_bounds(self, pos):
         for coord in pos:
-            if coord not in range(8):
-                return False
+            if coord not in range(8): return False
         return True
 
     def is_capture_own_color(self, start_tile, end_tile):

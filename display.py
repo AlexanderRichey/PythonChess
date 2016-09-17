@@ -11,6 +11,6 @@ class Display:
     def render(self):
         print ""
         for idx, row in enumerate(self.board.grid):
-            print str(8 - idx) + str().join(map(self.decoder, row))
+            print str(8 - idx) + "".join([self.decoder(tile) for tile in row])
 
         print "  A  B  C  D  E  F  G  H "

@@ -15,7 +15,6 @@ class Game:
     def play(self):
         self.board.populate()
         while not self.board.is_checkmate():
-            print self.board.possible_moves_for(self.current_player.color)
             self.display.render()
             self._render_check()
             self.current_player.take_turn()

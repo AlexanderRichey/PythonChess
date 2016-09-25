@@ -10,6 +10,6 @@ class SteppingPiece(Piece):
             start_pos = self.pos
             end_pos = [start_pos[0] + direction[0],
                        start_pos[1] + direction[1]]
-            if self.is_valid_and_is_in_bounds(start_pos, end_pos):
+            if self.is_valid(start_pos, end_pos):
                 possible_moves.add(tuple(end_pos))
         return possible_moves

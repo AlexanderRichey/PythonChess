@@ -34,7 +34,7 @@ class Pawn(Piece):
         return possible_moves
 
     def is_valid_pawn_move(self, start_pos, end_pos):
-        if self.is_valid_and_is_in_bounds(start_pos, end_pos):
+        if self.is_valid(start_pos, end_pos):
             if self.is_pawn_capture(start_pos, end_pos):
                 return self.board.is_capture(self.to_tile(start_pos),
                                              self.to_tile(end_pos))

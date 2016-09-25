@@ -49,24 +49,16 @@ class Board:
         for piece in self.pieces_for(color):
             for end_pos in piece.possible_moves():
                 end_tile_content = self.grid[end_pos[0]][end_pos[1]]
-                if self.is_valid(piece, end_tile_content):
-                    start_pos = piece.pos
-                    self._move(start_pos, piece, end_pos)
-                    if not self.is_check_for(color): checkmate = False
-                    self._undo_move(start_pos, piece, end_pos, end_tile_content)
-                    if not checkmate: return False
+                if self.is_capture_own_color(piece, end_tile_content): continue
+                start_pos = piece.pos
+                self._move(start_pos, piece, end_pos)
+                if not self.is_check_for(color): checkmate = False
+                self._undo_move(start_pos, piece, end_pos, end_tile_content)
+                if not checkmate: return False
         return True
 
     def is_legal(self, start_tile_content, end_pos):
         return end_pos in start_tile_content.possible_moves()
-
-    def is_valid(self, start_tile_content, end_tile_content):
-        if not self.is_piece(start_tile_content):
-            return False
-        elif self.is_capture_own_color(start_tile_content, end_tile_content):
-            return False
-        else:
-            return True
 
     def is_piece(self, tile_content):
         return isinstance(tile_content, Piece)

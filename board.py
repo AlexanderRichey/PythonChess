@@ -101,7 +101,8 @@ class Board:
         start_tile_content.pos = end_pos
         self.grid[start_pos[0]][start_pos[1]] = None
 
-    def _undo_move(self, start_pos, start_tile_content, end_pos, end_tile_content):
+    def _undo_move(self, start_pos, start_tile_content,
+                   end_pos, end_tile_content):
         try:
             self.pieces.add(end_tile_content)
             self.pieces_for(end_tile_content.color).add(end_tile_content)

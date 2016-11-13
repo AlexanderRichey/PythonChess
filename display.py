@@ -3,7 +3,7 @@ class Display:
         self.board = board
 
     def decoder(*arg):
-        if arg[1] == None:
+        if arg[1] is None:
             return " . "
         else:
             return arg[1].symbol()

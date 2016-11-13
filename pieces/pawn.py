@@ -1,7 +1,9 @@
 # This Python file uses the following encoding: utf-8
-import os, sys
+import os
+import sys
 
 from piece import Piece
+
 
 class Pawn(Piece):
     def __init__(self, board, pos, color, direction):

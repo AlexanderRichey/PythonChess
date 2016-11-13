@@ -14,7 +14,7 @@ class HumanPlayer:
                 break
             except Exception as e:
                 print "Invalid Move"
-                print e #for debugging
+                print e  # for debugging
 
     def parse_input(self, pos):
         return ((8 - int(pos[1])), self.parse_letter(pos[0].lower()))

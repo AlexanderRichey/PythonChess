@@ -12,9 +12,11 @@ class Board:
         self.pieces = set()
         self.white_pieces = set()
         self.black_pieces = set()
+        self.white_has_castled = False
+        self.black_has_castled = False
 
     def make_move(self, start_pos, end_pos):
-        start_tile_content = self.grid[start_pos[0]][start_pos[1]]
+        start_tile_content = self.get_tile_content(start_pos)
         if not self.is_legal(start_tile_content, end_pos): raise Exception
         self._move(start_pos, start_tile_content, end_pos)
 
@@ -31,8 +33,8 @@ class Board:
 
     def possible_moves_for(self, color):
         return set(coord for sublist in
-                tuple(piece.possible_moves() for piece in self.pieces_for(color))
-                for coord in sublist)
+            tuple(piece.possible_moves() for piece in self.pieces_for(color))
+            for coord in sublist)
 
     def is_check_for(self, color):
         return tuple(self._king_for(color).pos) in self.possible_moves_for(
@@ -48,7 +50,7 @@ class Board:
         checkmate = True
         for piece in self.pieces_for(color):
             for end_pos in piece.possible_moves():
-                end_tile_content = self.grid[end_pos[0]][end_pos[1]]
+                end_tile_content = self.get_tile_content(end_pos)
                 if self.is_capture_own_color(piece, end_tile_content): continue
                 start_pos = piece.pos
                 self._move(start_pos, piece, end_pos)
@@ -85,6 +87,48 @@ class Board:
         self._populate_pawns(6, "White", -1)
         self._populate_major_and_minor(7, "White")
 
+    def can_castle(self, color):
+        if color is "White":
+            return self.white_can_castle()
+        else:
+            return self.black_can_castle()
+
+    def white_can_castle(self):
+        if isinstance(self.grid[7][0], Rook) \
+                and isinstance(self.grid[7][4], King):
+            return not self.grid[7][0].has_moved() \
+                and not self.grid[7][4].has_moved() \
+                and self.is_empty(self.grid[7][1]) \
+                and self.is_empty(self.grid[7][2]) \
+                and self.is_empty(self.grid[7][3])
+        elif isinstance(self.grid[7][7], Rook) \
+                and isinstance(self.grid[7][4], King):
+            return not self.grid[7][7].has_moved() \
+                and not self.grid[7][4].has_moved() \
+                and self.is_empty(self.grid[7][5]) \
+                and self.is_empty(self.grid[7][6])
+
+    def black_can_castle(self):
+        if isinstance(self.grid[0][0], Rook) \
+                and isinstance(self.grid[0][4], King):
+            return not self.grid[0][0].has_moved() \
+                and not self.grid[0][4].has_moved() \
+                and self.is_empty(self.grid[0][1]) \
+                and self.is_empty(self.grid[0][2]) \
+                and self.is_empty(self.grid[0][3])
+        elif isinstance(self.grid[0][7], Rook) \
+                and isinstance(self.grid[0][4], King):
+            return not self.grid[0][7].has_moved() \
+                and not self.grid[0][4].has_moved() \
+                and self.is_empty(self.grid[0][5]) \
+                and self.is_empty(self.grid[0][6])
+
+    def get_tile_content(self, coord):
+        return self.grid[coord[0]][coord[1]]
+
+    def _set_tile_content(self, coord, content):
+        self.grid[coord[0]][coord[1]] = content
+
     def _opponent(self, color):
         if color == "White":
             return "Black"
@@ -92,24 +136,40 @@ class Board:
             return "White"
 
     def _move(self, start_pos, start_tile_content, end_pos):
-        end_tile_content = self.grid[end_pos[0]][end_pos[1]]
-        try:
-            self.pieces.discard(end_tile_content)
-            self.pieces_for(end_tile_content.color).discard(end_tile_content)
-        except: pass
-        self.grid[end_pos[0]][end_pos[1]] = start_tile_content
+        end_tile_content = self.get_tile_content(end_pos)
+        self._unstore_piece(end_tile_content)
+        self.set_tile_content(end_pos, start_tile_content)
         start_tile_content.pos = end_pos
-        self.grid[start_pos[0]][start_pos[1]] = None
+        start_tile_content.move_count += 1
+        self.set_tile_content(start_pos, None)
 
     def _undo_move(self, start_pos, start_tile_content,
                    end_pos, end_tile_content):
+        self.set_tile_content(start_pos, start_tile_content)
+        self._store_piece(start_tile_content)
+        start_tile_content.pos = start_pos
+        start_tile_content.move_count -= 1
+        self.set_tile_content(end_pos, end_tile_content)
+
+    def _store_piece(self, end_tile_content):
         try:
             self.pieces.add(end_tile_content)
             self.pieces_for(end_tile_content.color).add(end_tile_content)
-        except: pass
-        self.grid[start_pos[0]][start_pos[1]] = start_tile_content
-        start_tile_content.pos = start_pos
-        self.grid[end_pos[0]][end_pos[1]] = end_tile_content
+        except:
+            pass
+
+    def _unstore_piece(self, end_tile_content):
+        try:
+            self.pieces.discard(end_tile_content)
+            self.pieces_for(end_tile_content.color).discard(end_tile_content)
+        except:
+            pass
+
+    def _is_promotion(self):
+        pass
+
+    def _promote(self):
+        pass
 
     def _get_all_pieces(self):
         for row in self.grid:

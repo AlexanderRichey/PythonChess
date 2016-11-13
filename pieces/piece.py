@@ -3,6 +3,7 @@ class Piece:
         self.board = board
         self.pos = pos
         self.color = color
+        self.move_count = 0
 
     def is_valid(self, start_pos, end_pos):
         return self.board.is_in_bounds(end_pos) and \
@@ -10,4 +11,7 @@ class Piece:
                                                    self.to_tile(end_pos))
 
     def to_tile(self, pos):
-        return self.board.grid[pos[0]][pos[1]]
+        return self.board.get_tile_content(pos)
+
+    def has_moved(self):
+        return self.move_count > 0

@@ -135,6 +135,8 @@ class Board:
 
     def _set_tile_content(self, coord, content):
         self.grid[coord[0]][coord[1]] = content
+        if type(content, Piece):
+            content.pos = coord
 
     def _opponent(self, color):
         if color == "White":
@@ -146,7 +148,6 @@ class Board:
         end_tile_content = self.get_tile_content(end_pos)
         self._unstore_piece(end_tile_content)
         self.set_tile_content(end_pos, start_tile_content)
-        start_tile_content.pos = end_pos
         start_tile_content.move_count += 1
         self.set_tile_content(start_pos, None)
 
@@ -154,9 +155,42 @@ class Board:
                    end_pos, end_tile_content):
         self.set_tile_content(start_pos, start_tile_content)
         self._store_piece(start_tile_content)
-        start_tile_content.pos = start_pos
         start_tile_content.move_count -= 1
         self.set_tile_content(end_pos, end_tile_content)
+
+    def _castle(self, color, direction):
+        if color == "White":
+            self._castle_white(direction)
+        else:
+            self._castle_black(direction)
+
+    def _castle_white(self, direction):
+        king = self.get_tile_content([7, 4])
+        if direction == 'Queen':
+            rook = self.get_tile_content([7, 0])
+            self.set_tile_content([7, 3], rook)
+            self.set_tile_content([7, 2], king)
+        else:
+            rook = self.get_tile_content([7, 7])
+            self.set_tile_content([7, 5], rook)
+            self.set_tile_content([7, 6], king)
+        king.move_count += 1
+        rook.move_count += 1
+        self.white_has_castled = True
+
+    def _castle_black(self, direction):
+        king = self.get_tile_content([0, 4])
+        if direction == 'Queen':
+            rook = self.get_tile_content([0, 0])
+            self.set_tile_content([0, 3], rook)
+            self.set_tile_content([0, 2], king)
+        else:
+            rook = self.get_tile_content([0, 7])
+            self.set_tile_content([0, 5], rook)
+            self.set_tile_content([0, 6], king)
+        king.move_count += 1
+        rook.move_count += 1
+        self.black_has_castled = True
 
     def _store_piece(self, end_tile_content):
         try:

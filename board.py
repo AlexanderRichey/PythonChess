@@ -86,7 +86,9 @@ class Board:
         return True
 
     def is_capture_own_color(self, start_tile, end_tile):
-        return self.is_piece(end_tile) and end_tile.color == start_tile.color
+        return self.is_piece(end_tile) and \
+               self.is_piece(start_tile) and \
+               end_tile.color == start_tile.color
 
     def populate(self):
         self._populate_major_and_minor(0, "Black")
@@ -135,7 +137,7 @@ class Board:
 
     def _set_tile_content(self, coord, content):
         self.grid[coord[0]][coord[1]] = content
-        if type(content, Piece):
+        if isinstance(content, Piece):
             content.pos = coord
 
     def _opponent(self, color):
@@ -147,16 +149,16 @@ class Board:
     def _move(self, start_pos, start_tile_content, end_pos):
         end_tile_content = self.get_tile_content(end_pos)
         self._unstore_piece(end_tile_content)
-        self.set_tile_content(end_pos, start_tile_content)
+        self._set_tile_content(end_pos, start_tile_content)
         start_tile_content.move_count += 1
-        self.set_tile_content(start_pos, None)
+        self._set_tile_content(start_pos, None)
 
     def _undo_move(self, start_pos, start_tile_content,
                    end_pos, end_tile_content):
-        self.set_tile_content(start_pos, start_tile_content)
+        self._set_tile_content(start_pos, start_tile_content)
         self._store_piece(start_tile_content)
         start_tile_content.move_count -= 1
-        self.set_tile_content(end_pos, end_tile_content)
+        self._set_tile_content(end_pos, end_tile_content)
 
     def _castle(self, color, direction):
         if color == "White":
@@ -168,12 +170,12 @@ class Board:
         king = self.get_tile_content([7, 4])
         if direction == 'Queen':
             rook = self.get_tile_content([7, 0])
-            self.set_tile_content([7, 3], rook)
-            self.set_tile_content([7, 2], king)
+            self._set_tile_content([7, 3], rook)
+            self._set_tile_content([7, 2], king)
         else:
             rook = self.get_tile_content([7, 7])
-            self.set_tile_content([7, 5], rook)
-            self.set_tile_content([7, 6], king)
+            self._set_tile_content([7, 5], rook)
+            self._set_tile_content([7, 6], king)
         king.move_count += 1
         rook.move_count += 1
         self.white_has_castled = True
@@ -182,12 +184,12 @@ class Board:
         king = self.get_tile_content([0, 4])
         if direction == 'Queen':
             rook = self.get_tile_content([0, 0])
-            self.set_tile_content([0, 3], rook)
-            self.set_tile_content([0, 2], king)
+            self._set_tile_content([0, 3], rook)
+            self._set_tile_content([0, 2], king)
         else:
             rook = self.get_tile_content([0, 7])
-            self.set_tile_content([0, 5], rook)
-            self.set_tile_content([0, 6], king)
+            self._set_tile_content([0, 5], rook)
+            self._set_tile_content([0, 6], king)
         king.move_count += 1
         rook.move_count += 1
         self.black_has_castled = True

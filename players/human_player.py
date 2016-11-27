@@ -30,5 +30,5 @@ class HumanPlayer:
                 print "Invalid Input"
 
     def validate_color(self, start_pos, end_pos):
-        if self.board.grid[start_pos[0]][start_pos[1]].color != self.color:
+        if self.board.get_tile_content(start_pos).color != self.color:
             raise Exception
